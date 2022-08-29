@@ -7,6 +7,7 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
         success: boolean,
         payload: Array<Array<number>>
     }
+    const new_grid: Array<Array<number>> = [...raw_grid];
     const sudResult: SudokuReturnType = {success: true, payload: []};
     //const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     //const zeroToNine: Array<number> = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -32,6 +33,22 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
             }
             console.log('Sudoku solution valid');
             return sudResult;
+        case 1:
+            //const new_grid: Array<Array<number>> = [...raw_grid];
+            for(let i=0; i<9; i++){
+                //sudResult.payload.push(raw_grid[i]);
+                for(let j=0; j<9; j++) {
+                    if (new_grid[i][j] === 0) {
+                        const newEntry = allButOne(new_grid, i, j);
+                        console.log('The new entry to the grid is', newEntry);
+                        new_grid[i][j] = newEntry;
+                    } else {
+                        //console.log('Move on')
+                    }
+                }
+            }
+            return {success: true, payload: new_grid};
+            break;         
         default:
             return {success: false, payload: [[]]} 
     }
@@ -45,4 +62,27 @@ function grabBox(matrix: Array<Array<number>>, index: number) {
                     matrix[mRow+1].slice(mCol, mCol+3),
                     matrix[mRow+2].slice(mCol, mCol+3)];
     return newBox[0].concat(newBox[1], newBox[2]);
+}
+
+function allButOne(matrix: Array<Array<number>>, indexI: number, indexJ: number) {
+    const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const uniqueRow = [...new Set(matrix[indexI])];
+    const uniqueCol = [...new Set(matrix.map((row) => {return row[indexJ]}))];
+    const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+indexJ%3))];
+    if (uniqueRow.length === 9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueRow.includes(item)})];
+        //console.log('Found', newEntry, 'based on row');
+        return newEntry[0];
+    } else if (uniqueCol.length ===9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueCol.includes(item)})];
+        //console.log('Found', newEntry, 'based on column');
+        return newEntry[0];
+    } else if (uniqueBox.length === 9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueBox.includes(item)})];
+        //console.log('Found', newEntry, 'based on box');
+        return newEntry[0];
+    } else{
+        console.log('Cannot be found right now');
+        return 0;
+    }
 }
