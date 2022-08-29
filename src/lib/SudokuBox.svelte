@@ -4,6 +4,7 @@
     - Enabling smaller possibility boxes would be ideal
     - There should also be some kind of highlight styles when showing a step-by-step solution
     */
+   
 	export let example_number: Array<number>
 </script>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SudokuBox from '$lib/SudokuBox.svelte';
 	let puzzle_raw = [
   [5,3,0,0,7,0,0,0,0],
   [6,0,0,1,9,5,0,0,0],
@@ -10,7 +11,7 @@
   [0,0,0,4,1,9,0,0,5],
   [0,0,0,0,8,0,0,7,9]];
 	//import Counter from '$lib/Counter.svelte';
-	import SudokuBox from '$lib/SudokuBox.svelte';
+	
 </script>
 
 <svelte:head>
