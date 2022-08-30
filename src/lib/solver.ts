@@ -11,6 +11,7 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
     const sudResult: SudokuReturnType = {success: true, payload: []};
     //const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     //const zeroToNine: Array<number> = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let counter = 0;
     switch (difficulty) {
         case 0:
             for(let i=0; i<9; i++){
@@ -37,16 +38,41 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
             //const new_grid: Array<Array<number>> = [...raw_grid];
             for(let i=0; i<9; i++){
                 //sudResult.payload.push(raw_grid[i]);
+                counter += new_grid[i].reduce((total: number, num: number) => {return num === 0 ? total + 1 : total;}, 0);
                 for(let j=0; j<9; j++) {
                     if (new_grid[i][j] === 0) {
                         const newEntry = allButOne(new_grid, i, j);
-                        console.log('The new entry to the grid is', newEntry);
+                        if(newEntry !== 0) {
+                            counter --;
+                            //console.log('Counter is now', counter);
+                        }
+                        console.log('At', i, j, 'has new entry to the grid of', newEntry);
                         new_grid[i][j] = newEntry;
                     } else {
                         //console.log('Move on')
                     }
                 }
             }
+            while(counter > 0) {
+                for(let i=0; i<9; i++){
+                    //sudResult.payload.push(raw_grid[i]);
+                    //counter += new_grid[i].reduce((total: number, num: number) => {return num === 0 ? total + 1 : total;}, 0);
+                    for(let j=0; j<9; j++) {
+                        if (new_grid[i][j] === 0) {
+                            const newEntry = allButOne(new_grid, i, j);
+                            if(newEntry !== 0) {
+                                counter --;
+                                //console.log('Counter is now', counter);
+                            }
+                            console.log('At', i, j, 'has new entry to the grid of', newEntry);
+                            new_grid[i][j] = newEntry;
+                        } else {
+                            //console.log('Move on')
+                        }
+                    }
+                }
+            };
+            console.log(new_grid);
             return {success: true, payload: new_grid};
             break;         
         default:
@@ -68,7 +94,7 @@ function allButOne(matrix: Array<Array<number>>, indexI: number, indexJ: number)
     const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const uniqueRow = [...new Set(matrix[indexI])];
     const uniqueCol = [...new Set(matrix.map((row) => {return row[indexJ]}))];
-    const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+indexJ%3))];
+    const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3)))];
     if (uniqueRow.length === 9) {
         const newEntry = [...oneToNine.filter((item: number) => {return !uniqueRow.includes(item)})];
         //console.log('Found', newEntry, 'based on row');
@@ -79,10 +105,10 @@ function allButOne(matrix: Array<Array<number>>, indexI: number, indexJ: number)
         return newEntry[0];
     } else if (uniqueBox.length === 9) {
         const newEntry = [...oneToNine.filter((item: number) => {return !uniqueBox.includes(item)})];
-        //console.log('Found', newEntry, 'based on box');
+        //console.log('Found', newEntry, 'based on box', uniqueBox);
         return newEntry[0];
     } else{
-        console.log('Cannot be found right now');
+        //console.log('Cannot be found right now');
         return 0;
     }
 }

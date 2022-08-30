@@ -123,14 +123,14 @@ describe('Tests for solver difficulty 1', () => {
     test('Expect multiple zero entries, not all obeying all-but-one rule, but can be deduced from others, to be filled for a complete, valid solution', () => {
         //ARRANGE
         const toyGrid = [
-            [0,3,4,6,7,8,9,0,2],
+            [0,3,4,0,7,8,9,0,2],
             [6,7,2,1,9,5,0,4,8], 
-            [1,9,8,3,4,2,5,6,7], 
+            [1,0,8,3,4,2,0,6,7], 
             [8,5,9,0,6,1,0,2,3], 
-            [4,2,6,8,5,3,7,9,1], 
+            [4,2,6,0,5,3,7,9,1], 
             [7,1,3,9,2,4,8,5,6], 
             [0,6,1,5,3,0,2,8,4], 
-            [2,8,7,4,1,9,6,3,5], 
+            [2,0,7,4,1,9,6,0,5], 
             [3,4,5,2,0,6,1,7,0]];
         const actual = solver(toyGrid, 1);
         //ACT
@@ -150,7 +150,7 @@ describe('Tests for solver difficulty 1', () => {
     });
 });
 
-describe('Tests for solver difficulty 1 (Gentle)', () => {
+/*describe('Tests for solver difficulty 2 (Gentle)', () => {
     test('Expect gentle solution to be solved', () => {
         //ARRANGE
         const toyGrid = [
@@ -180,3 +180,4 @@ describe('Tests for solver difficulty 1 (Gentle)', () => {
         expect(actual).toEqual(expected);
     });
 });
+*/
