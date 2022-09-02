@@ -35,7 +35,9 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
             console.log('Sudoku solution valid');
             return sudResult;
         case 1:
+            counter += setCounter(new_grid);
             //const new_grid: Array<Array<number>> = [...raw_grid];
+            /*
             for(let i=0; i<9; i++){
                 //sudResult.payload.push(raw_grid[i]);
                 counter += new_grid[i].reduce((total: number, num: number) => {return num === 0 ? total + 1 : total;}, 0);
@@ -53,6 +55,7 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
                     }
                 }
             }
+            */
             while(counter > 0) {
                 for(let i=0; i<9; i++){
                     //sudResult.payload.push(raw_grid[i]);
@@ -74,7 +77,27 @@ export default function solver (raw_grid: Array<Array<number>>, difficulty: numb
             };
             console.log(new_grid);
             return {success: true, payload: new_grid};
-            break;         
+            break; 
+        case 2:
+            counter += setCounter(new_grid);
+            while(counter > 0) {
+                for(let i=0; i<9; i++){
+                    for(let j=0; j<9; j++) {
+                        if (new_grid[i][j] === 0) {
+                            const newEntry = gentleFitter(new_grid, i, j);
+                            if(newEntry !== 0) {
+                                counter --;
+                                //console.log('Counter is now', counter);
+                            }
+                            console.log('At', i, j, 'has new entry to the grid of', newEntry);
+                            new_grid[i][j] = newEntry;
+                        } else {
+                            //console.log('Move on')
+                        }
+                    }
+                }
+            };
+            break;   
         default:
             return {success: false, payload: [[]]} 
     }
@@ -90,11 +113,54 @@ function grabBox(matrix: Array<Array<number>>, index: number) {
     return newBox[0].concat(newBox[1], newBox[2]);
 }
 
+function setCounter(matrix: Array<Array<number>>) {
+    let counterAdded = 0;
+    for (let i=0; i<9; i++) {
+        counterAdded += matrix[i].reduce((total: number, num: number) => {return num === 0 ? total + 1 : total;}, 0);
+    }
+    return counterAdded;
+}
+
 function allButOne(matrix: Array<Array<number>>, indexI: number, indexJ: number) {
     const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const uniqueRow = [...new Set(matrix[indexI])];
     const uniqueCol = [...new Set(matrix.map((row) => {return row[indexJ]}))];
     const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3)))];
+    if (uniqueRow.length === 9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueRow.includes(item)})];
+        //console.log('Found', newEntry, 'based on row');
+        return newEntry[0];
+    } else if (uniqueCol.length ===9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueCol.includes(item)})];
+        //console.log('Found', newEntry, 'based on column');
+        return newEntry[0];
+    } else if (uniqueBox.length === 9) {
+        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueBox.includes(item)})];
+        //console.log('Found', newEntry, 'based on box', uniqueBox);
+        return newEntry[0];
+    } else{
+        //console.log('Cannot be found right now');
+        return 0;
+    }
+}
+
+function gentleFitter(matrix: Array<Array<number>>, indexI: number, indexJ: number) {
+    const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const thisBox = grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3));
+    const thisI = indexI%3 + 3*indexJ%3;
+    const numbersInBox = thisBox.filter((num) => {return num>0});
+    for(let i=0; i<9; i++) {
+        if(thisBox[i] === 0 && i !== thisI) {
+            for(let j=0; j<9; j++) {
+                if(!numbersInBox.includes(j)) {
+                    console.log(j);
+                }
+            }
+        }
+    }
+    //const uniqueRow = [...new Set(matrix[indexI])];
+    //const uniqueCol = [...new Set(matrix.map((row) => {return row[indexJ]}))];
+    //const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3)))];
     if (uniqueRow.length === 9) {
         const newEntry = [...oneToNine.filter((item: number) => {return !uniqueRow.includes(item)})];
         //console.log('Found', newEntry, 'based on row');
