@@ -144,6 +144,29 @@ function allButOne(matrix: Array<Array<number>>, indexI: number, indexJ: number)
     }
 }
 
+function gentleFitterCalculator(matrix: Array<Array<number>>, indexI: number, indexJ: number) {
+    /* Gentle thing calculator plan
+    - We assume that the number is not currently filled
+    - A human will solve this by seeing the numbers in other rows and columns as blockers
+      - So a successful output is either a fail, or a a success with the correct number, the columns used, and the rows used
+      - Now we don't have to solve it this way, but we do need to show how a user will solve it
+      - There may be a quicker wy involving rearranging the grid dynamically to put the optimal positions at the top
+        - But I would need to improve my maths to do this!
+    - An input can be the box, the 3 rows, the 3 columns, and a number for the element checked
+    - Therefore, we loop through 1-9 to check for possibility of that number to fill gap
+      - We can check if that number is already in own box, own row or own column - if so then skip
+      - If not, then we go through the the other gaps in box to see if this number fits those
+        - Note down the columns and rows in which the number is found as you go
+      - If one gap doesn't have that number in own row or column, then skip
+        - Reset the recordings for rows and columns here.
+      - If it does, then record that row or column
+      - If all do, then record that number - it is the number to fit the gap!
+    - Return the number, and the rows/columns that contributed to the decision
+        - As an aside, a better order to go through sudoku boxes than 0-8 is [0, 1, 2, 5, 3, 4, 7, 8, 6]
+          - This is because new entries from the previous box can help solve gaps in the next
+    */
+}
+
 function gentleFitter(matrix: Array<Array<number>>, indexI: number, indexJ: number) {
     const oneToNine: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     const thisBox = grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3));
@@ -158,23 +181,5 @@ function gentleFitter(matrix: Array<Array<number>>, indexI: number, indexJ: numb
             }
         }
     }
-    //const uniqueRow = [...new Set(matrix[indexI])];
-    //const uniqueCol = [...new Set(matrix.map((row) => {return row[indexJ]}))];
-    //const uniqueBox = [...new Set(grabBox(matrix, 3*Math.floor(indexI/3)+Math.floor(indexJ/3)))];
-    if (uniqueRow.length === 9) {
-        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueRow.includes(item)})];
-        //console.log('Found', newEntry, 'based on row');
-        return newEntry[0];
-    } else if (uniqueCol.length ===9) {
-        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueCol.includes(item)})];
-        //console.log('Found', newEntry, 'based on column');
-        return newEntry[0];
-    } else if (uniqueBox.length === 9) {
-        const newEntry = [...oneToNine.filter((item: number) => {return !uniqueBox.includes(item)})];
-        //console.log('Found', newEntry, 'based on box', uniqueBox);
-        return newEntry[0];
-    } else{
-        //console.log('Cannot be found right now');
-        return 0;
-    }
+    return 0;
 }
